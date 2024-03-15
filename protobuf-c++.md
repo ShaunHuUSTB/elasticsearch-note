@@ -274,9 +274,32 @@ message Request {
   ```  
   * 解析和序列化(Parsing and Serialization)
   ```
-  bool SerializeToString(string* output) const; // 序列化消息并存储给定字符串中的字节。请注意，字节是二进制的
+  bool SerializeToString(string* output) const; // 序列化消息并存储给定字符串中二进制的字节
   bool ParseFromString(const string& data); // 从给定字符串中解析消息
-  bool SerializeToOstream(ostream* output) const; // 将消息写入给定的C++ ostream.
-  bool ParseFromIstream(istream* input); // 从给定的C++中解析消息 istream.
   ```
-  * 和json
+
+  4. [IO](https://protobuf.dev/reference/cpp/api-docs/#google.protobuf.io) TODO
+  
+  5. [Utility](https://protobuf.dev/reference/cpp/api-docs/#google.protobuf.util)
+      * [google/protobuf/util/json_util.h][3] 用于在protobuf二进制格式和proto3 JSON格式之间转换, 性能一般
+        ```
+        struct JsonPrintOptions {
+          bool add_whitespace = false;
+          bool always_print_fields_with_no_presence = false;
+          bool always_print_enums_as_ints = false;
+          bool preserve_proto_field_names = false;
+          bool unquote_int64_if_possible = false;
+        };
+    
+         util::Status util::MessageToJsonString(const Message& message, std::string* output, const JsonPrintOptions& options);
+    
+         struct JsonPraseOptions{
+            bool ignore_unknown_fields = false;
+            bool case_insensitive_enum_parsing = false;
+         };
+         util::Status util::JsonStringToMessage(StringPiece input, Message* message, const JsonParseOptions& options);
+         ```
+  
+  [3]: https://protobuf.dev/reference/cpp/api-docs/google.protobuf.util.json_util
+    
+
