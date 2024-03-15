@@ -123,10 +123,10 @@ message Request {
       - void clear_users(); // 清空数组
       - User* mutable_users(int index); // 根据索引获取数组元素指针, 可以设置元素值, 等效于set方法
       - User* add_features(); // 数组末尾添加元素
-  * 额外方法(基本数据类型和消息字段类型一致)
-    - RepeatedPtrField<float>* mutable_features(); // 获取数组指针
-    - const RepeatedPtrField<float>& features() const; //获取数组引用
-  * [遍历数组][3]
+  * 获取容器对象(基本数据类型和消息字段类型一致)
+    - RepeatedPtrField<float>* mutable_features(); // 获取数组指针, 可修改容器对象本身
+    - const RepeatedPtrField<float>& features() const; //获取数组引用, 不可修改容器对象本身
+  * [遍历数组](https://blog.csdn.net/liuxiao723846/article/details/105564742)
     - 索引循环
     ```
     for (int i = 0; i < request.users_size(); i++) {
@@ -148,5 +148,135 @@ message Request {
     };
     ```
 
-[3]: https://blog.csdn.net/liuxiao723846/article/details/105564742
 3. map字段
+  * size, clear
+    - int extrainfo_size() const;
+    - void clear_extrainfo();
+  * 获取容器对象
+    - Map<string, string>* mutable_extrainfo(); // 可修改容器对象本身
+    - const Map<string, string>& extrainfo() const; // 不可修改容器对象本身
+  * 添加数据
+    - (*request.mutable_extrainfo())[my_key] = my_value;
+  * 遍历map
+    - 迭代器循环
+    ```
+    for (auto iter = request.extrainfo().begin(); iter != request.extrainfo().end(); iter++) {
+      const auto& key = iter->first;
+      const auto& value = iter->second;
+      ...
+    }
+    ```
+    - 范围循环
+    ```
+    for (const auto& elem : request.extrainfo()) {
+      const auto& key = elem.first;
+      const auto& value = elem.second;
+      ...
+    };
+    ```
+  * 与std::map转换(深拷贝)
+  ```
+  std::map<string, string> std_extrainfo(request.extrainfo().begin(), request.extrainfo().end());
+  google::protobuf::Map<string, string> extrainfo(std_extrainfo.begin(), std_extrainfo.end());
+  ```
+### 容器类API
+
+1. [RepeatedPtrField等效于std::vector](https://protobuf.dev/reference/cpp/api-docs/google.protobuf.repeated_field/)
+  * 拷贝(Copy)
+  ```
+  RepeatedField(const RepeatedField & other);
+  RepeatedField& operator=(const RepeatedField & other);
+  ```  
+  * 迭代器(Iterators)
+  ```
+  iterator begin();
+  iterator end();
+  ```
+  * 容量(Capacity)
+  ```
+  int size() const;
+  bool empty() const;
+  ```
+  * 元素访问(Element access)
+  ```
+  const T& Get(int index) const;
+  T*	Mutable(int index);
+  T& operator[](int index);
+  const T& at(int index) const;
+  T& at(const Key& key);
+  ```
+  * 修改器(Modifiers)
+  ```
+  void Set(int index, const T& value);
+  void Add(const Element & value);
+  Element*	Add();
+  void  Add(Iter begin, Iter end);
+  void RemoveLast();
+  void Clear();
+  ```
+
+2. [MAP等效于std::unordered_map](https://protobuf.dev/reference/cpp/api-docs/google.protobuf.map/)
+  * 拷贝(Copy)
+  ```
+  Map(const Map& other);
+  Map& operator=(const Map& other);
+  ```  
+  * 迭代器(Iterators)
+  ```
+  iterator begin();
+  iterator end();
+  ```
+  * 容量(Capacity)
+  ```
+  int size() const;
+  bool empty() const;
+  ```
+  * 元素访问(Element access)
+  ```
+  T& operator[](const Key& key);
+  const T& at(const Key& key) const;
+  T& at(const Key& key);
+  ```
+  * 修改器(Modifiers)
+  ```
+  pair<iterator, bool> insert(const value_type& value);
+  template<class InputIt>
+  void insert(InputIt first, InputIt last);
+  size_type erase(const Key& Key);
+  iterator erase(const_iterator pos);
+  iterator erase(const_iterator first, const_iterator last);
+  void clear();
+  ```
+  * 查找
+  ```
+  bool contains(const Key& key) const;
+  int count(const Key& key) const;
+  const_iterator find(const Key& key) const;
+  iterator find(const Key& key);
+  ```
+
+3. [Message](https://protobuf.dev/reference/cpp/api-docs/google.protobuf.message/)
+  * 构造(Copy)
+  ```
+  Message(const Message& other);
+  Message& operator=(const Message& other);
+  Message* Message::New();
+  void CopyFrom(const Message & from); // 深拷贝
+  void Swap(Message* other);
+  ```  
+  * 合并(Merge)
+  ```
+  void MergeFrom(const Message & from);
+  ```  
+  * 调试(Debug)
+  ```
+  string DebugString() const;
+  ```  
+  * 解析和序列化(Parsing and Serialization)
+  ```
+  bool SerializeToString(string* output) const; // 序列化消息并存储给定字符串中的字节。请注意，字节是二进制的
+  bool ParseFromString(const string& data); // 从给定字符串中解析消息
+  bool SerializeToOstream(ostream* output) const; // 将消息写入给定的C++ ostream.
+  bool ParseFromIstream(istream* input); // 从给定的C++中解析消息 istream.
+  ```
+  * 和json
