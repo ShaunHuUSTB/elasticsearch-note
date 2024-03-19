@@ -39,11 +39,14 @@
 # Lucene
 1. 基于倒排索引的Java开源全文检索引擎工具包
 2. 官网:[https://lucene.apache.org/](https://lucene.apache.org/)
+
    源码:[https://github.com/apache/lucene](https://github.com/apache/lucene)
+
    视频教程:[https://www.bilibili.com/video/BV1c8411c7Kj?p=1](https://www.bilibili.com/video/BV1c8411c7Kj?p=1)
+
    文档教程:[https://xie.infoq.cn/article/1c97baa5110393fb56daa8fa5](https://xie.infoq.cn/article/1c97baa5110393fb56daa8fa5)
-3. 创建索引和搜索流程![](https://static001.geekbang.org/infoq/d2/d2a974af0b9bfcdc9ef8d7dddfb5d26e.png)
-4. 相关度排序
+4. 创建索引和搜索流程![](https://static001.geekbang.org/infoq/d2/d2a974af0b9bfcdc9ef8d7dddfb5d26e.png)
+5. 相关度排序
 
 ## Lucene数据模型
 1. Index: 索引, 由很多Document组成
@@ -86,6 +89,7 @@
     * 删除索引
 ## Lucene检索
 对要搜索的信息创建Query查询对象，Lucene会根据Query查询对象生成最终的查询语法
+
 两种方法:使用Lucene提供Query子类和使用QueryParse解析查询表达式
 
 ### 通过Query子类来创建查询对象
