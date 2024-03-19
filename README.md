@@ -1,4 +1,5 @@
 # elasticsearch-note
+[TOC]
 # 全文检索
 1. 数据（分类）
     1. 结构化数据：如数据库
