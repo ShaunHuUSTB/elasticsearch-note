@@ -1,4 +1,4 @@
-![image](https://github.com/ShaunHuUSTB/elasticsearch-note/assets/63142076/c3e11b9b-39c1-4bcf-a8a2-b3b7902e616d)# elasticsearch-note
+# elasticsearch-note
 # 全文检索
 1. 数据（分类）
     1. 结构化数据：如数据库
