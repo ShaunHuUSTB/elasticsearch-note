@@ -78,8 +78,8 @@
             + 存储数据结构:FST(Finite State Machines)[有限状态机](https://www.cnblogs.com/tech-lee/p/15225276.html)
                - 查询速度快, 复杂度O(len(str))
                - 内存占用小, 内存存放共享前缀(term index), 磁盘存放后缀词块(term dict)(分block保存)
-            + 数值类或者多维度: [BKDTree](https://developer.aliyun.com/article/581877)
-        + 倒排表(Invert)
+            + 数值类或者多维度: [BKD-Tree](https://developer.aliyun.com/article/581877)
+        + 倒排链(Invert Index)
            - 数据压缩: [Frame of reference](https://www.cnblogs.com/tech-lee/p/15225276.html)
            - 查找合并: [SkipList跳跃表](https://developer.aliyun.com/article/581877)
         + 正向文件: 行式存储
@@ -88,8 +88,18 @@
     * 新增文档
     * 修改索引
     * 删除索引
+
 ## Lucene检索
-对要搜索的信息创建Query查询对象，Lucene会根据Query查询对象生成最终的查询语法
+1. [检索类型及性能](https://blog.csdn.net/star1210644725/article/details/127131826)
+    * 单个词条查询: 获取该词条的倒排链(有序docId列表): 性能优, 千万级/每秒
+    * 字符串范围/前缀/通配符查询: 从FST获取符合条件的term集合, 再根据term查找倒排链, 性能一般, 百万级/每秒
+    * 对数字类型范围查询: 从BKD-Tree获取符合条件的docId无序集合, 性能较优: 5百万级/每秒
+    * 组合条件查询: 单个条件查询+集合运算
+        - N个倒排链求交集: 采用skipList, 性能优
+        - N个倒排链求并集: 性能一般
+        - BKD-Tree结果和其他结果合并: 底层查询IndexOrDocValuesQuery, 性能优
+
+2. 检索语法:对要搜索的信息创建Query查询对象，Lucene会根据Query查询对象生成最终的查询语法
 
 两种方法:使用Lucene提供Query子类和使用QueryParse解析查询表达式
 
