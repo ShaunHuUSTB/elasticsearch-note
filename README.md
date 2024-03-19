@@ -64,6 +64,7 @@
     * 电商站内搜索: Document->商品, Field: name, category, price, ...
     * 本地文件搜索: Document->文件, Field: name, path, size, ...
 3. 分析文档(分词): 对Document的Field进行分词和过滤
+    * 分词器
 4. 创建索引
     * 索引原理
        + [常见词典结构](https://www.cnblogs.com/sessionbest/articles/8689030.html)
@@ -98,3 +99,10 @@
 2. MultiFieldQueryParser
 
 ## 相关度排序
+1. 计算词权重term weight
+    * TF: 词在同一个文档中出现的频率, TF越高, term weight越大
+    * DF: 词在多个文档中出现的频率, DF越高, term weight越小
+2. 根据词权重打分
+3. 设置boost值影响打分: boost值设置到Field上
+    * 创建索引时设置boost
+    * 搜索时设置boost
