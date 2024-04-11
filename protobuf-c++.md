@@ -255,32 +255,42 @@ message Request {
   iterator find(const Key& key);
   ```
 
-3. [Message](https://protobuf.dev/reference/cpp/api-docs/google.protobuf.message/)
+### [标准消息类Message](https://protobuf.dev/reference/cpp/api-docs/google.protobuf.message/)
   * 构造(Copy)
   ```
   Message(const Message& other);
   Message& operator=(const Message& other);
   Message* Message::New();
+  ```  
+  * 常用(Basic)
+  ```
   void CopyFrom(const Message & from); // 深拷贝
   void Swap(Message* other);
-  ```  
-  * 合并(Merge)
-  ```
   void MergeFrom(const Message & from);
+  bool IsInitialize() const; //检查是否全部required字段都被set
+  void Clear(); // 所有项复位到空
+  int ByteSize() const; // 消息字节大小
   ```  
   * 调试(Debug)
   ```
-  string DebugString() const;
+  string DebugString() const; //将消息内容以可读的方式输出
+  string ShortDebugString() const; //功能类似于，DebugString(),输出时会有较少的空白
+  string Utf8DebugString() const; //Like DebugString(), but do not escape UTF-8 byte sequences.
+  void PrintDebugString() const;  //Convenience function useful in GDB. Prints DebugString() to stdout.
   ```  
   * 解析和序列化(Parsing and Serialization)
   ```
   bool SerializeToString(string* output) const; // 序列化消息并存储给定字符串中二进制的字节
   bool ParseFromString(const string& data); // 从给定字符串中解析消息
+  bool SerializeToArray(void * data, int size) const  //将消息序列化至数组
+  bool ParseFromArray(const void * data, int size)    //从数组解析消息
+  bool SerializeToOstream(ostream* output) const; //将消息写入到给定的C++ ostream中
+  bool ParseFromIstream(istream* input); //从给定的C++ istream解析消息
   ```
 
-  4. [IO](https://protobuf.dev/reference/cpp/api-docs/#google.protobuf.io) TODO
+  4. [IO](https://protobuf.dev/reference/cpp/api-docs/#google.protobuf.io) 用于I/O的辅助类
   
-  5. [Utility](https://protobuf.dev/reference/cpp/api-docs/#google.protobuf.util)
+  5. [Utility](https://protobuf.dev/reference/cpp/api-docs/#google.protobuf.util)实用程序类
       * [google/protobuf/util/json_util.h][3] 用于在protobuf二进制格式和proto3 JSON格式之间转换, 性能一般
         ```
         struct JsonPrintOptions {
