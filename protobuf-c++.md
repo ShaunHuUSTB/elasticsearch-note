@@ -2,6 +2,9 @@
 - [GitHub源码](https://github.com/protocolbuffers/protobuf)
 - [官方文档](https://developers.google.com/protocol-buffers/)
   - [proto2译文](https://colobu.com/2015/01/07/Protobuf-language-guide/)
+- protobuf是一种用于 对结构数据进行序列化的工具，从而实现 数据存储和交换
+  - 序列化： 将结构数据或者对象转换成能够用于存储和传输的格式
+  - 反序列化： 在其他的计算环境中，将序列化后的数据还原为数据结构和对象
 
 ## protbuf使用
 1. 定义.proto文件
@@ -82,8 +85,14 @@ class ExampleSearchService : public SearchService {
 ### 应用protobuf的RPC框架TODO
 https://github.com/protocolbuffers/protobuf/blob/main/docs/third_party.md
 
-## 生成类TODO
+## [生成类](https://protobuf.dev/programming-guides/proto3/#generating)
 1. 生成的消息类都继承自protobuf的公共类PROTOBUF_NAMESPACE_ID::Message
+2. *.proto文件编译生成C++头文件和源文件
+```
+  protoc --proto_path=IMPORT_PATH --cpp_out=DST_DIR $SRC_DIR/*.proto
+  IMPROT_PATH需要包含的proto文件目录, --proto_path 缩写 -I, 可多次传递
+```
+3. 工程编译链接protobuf库文件
 
 ## 消息API
 
@@ -289,8 +298,10 @@ message Request {
   ```
 
   4. [IO](https://protobuf.dev/reference/cpp/api-docs/#google.protobuf.io) 用于I/O的辅助类
+    * [google/protobuf/io/zero_copy_stream.h](https://protobuf.dev/reference/cpp/api-docs/google.protobuf.io.zero_copy_stream/)该文件包含ZeroCopyInputStream和ZeroCopyOutputStream接口，它们表示可以读取和写入协议缓冲区的抽象 I/O 流
+       * TODO
   
-  5. [Utility](https://protobuf.dev/reference/cpp/api-docs/#google.protobuf.util)实用程序类
+  6. [Utility](https://protobuf.dev/reference/cpp/api-docs/#google.protobuf.util)实用程序类
       * [google/protobuf/util/json_util.h][3] 用于在protobuf二进制格式和proto3 JSON格式之间转换, 性能一般
         ```
         struct JsonPrintOptions {
