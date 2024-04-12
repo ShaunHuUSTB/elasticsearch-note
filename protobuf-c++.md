@@ -65,7 +65,7 @@ message Request {
 
 ## protbuf服务定义
 想将消息类型用在RPC系统中, 需要在.proto文件中定义一个服务接口,服务中有一个方法接收请求返回响应
-1. optional cc_generic_services = true; 编译器基于服务定义产生抽象服务代码
+1. option cc_generic_services = true; 编译器基于服务定义产生抽象服务代码
 2. 定义服务
 ```
 service SearchService {
