@@ -6,6 +6,14 @@
   - 序列化： 将结构数据或者对象转换成能够用于存储和传输的格式
   - 反序列化： 在其他的计算环境中，将序列化后的数据还原为数据结构和对象
 
+## [protobuf优缺点](https://zhuanlan.zhihu.com/p/425528252#%E4%B8%80%E3%80%81protobuf%E7%AE%80%E4%BB%8B%EF%BC%9A)
+1. 优点
+   1.1 性能高效
+   1.2 跨平台,多语言
+   1.3 扩展性,兼容性强
+2. 缺点
+   2.1 自解释性查
+
 ## protbuf使用
 1. 定义.proto文件
    * 定义protobuf版本: syntax = "proto2";
@@ -82,6 +90,74 @@ class ExampleSearchService : public SearchService {
 };
 ```
 
+### rpc实现client和server
+1. client:实现RpcChannel的CallMethod()接口和RpcController
+```
+using google::protobuf;
+
+protobuf::RpcChannel* channel;
+protobuf::RpcController* controller;
+SearchService* service;
+SearchRequest request;
+SearchResponse response;
+
+void DoSearch() {
+  // You provide classes MyRpcChannel and MyRpcController, which implement
+  // the abstract interfaces protobuf::RpcChannel and protobuf::RpcController.
+  channel = new MyRpcChannel("somehost.example.com:1234");
+  controller = new MyRpcController;
+
+  // The protocol compiler generates the SearchService class based on the
+  // definition given earlier.
+  service = new SearchService::Stub(channel);
+
+  // Set up the request.
+  request.set_query("protocol buffers");
+
+  // Execute the RPC.
+  service->Search(controller, &request, &response,
+                  protobuf::NewCallback(&Done));
+}
+
+void Done() {
+  delete service;
+  delete channel;
+  delete controller;
+}
+```
+2. server: 实现SearchService的Search接口, 提供可以配置服务器端口,绑定服务实例,启动和停止服务的Server类
+```
+using google::protobuf;
+
+class ExampleSearchService : public SearchService {
+ public:
+  void Search(protobuf::RpcController* controller,
+              const SearchRequest* request,
+              SearchResponse* response,
+              protobuf::Closure* done) {
+    if (request->query() == "google") {
+      response->add_result()->set_url("http://www.google.com");
+    } else if (request->query() == "protocol buffers") {
+      response->add_result()->set_url("http://protobuf.googlecode.com");
+    }
+    done->Run();
+  }
+};
+
+int main() {
+  // You provide class MyRpcServer.  It does not have to implement any
+  // particular interface; this is just an example.
+  MyRpcServer server;
+
+  protobuf::Service* service = new ExampleSearchService;
+  server.ExportOnPort(1234, service);
+  server.Run();
+
+  delete service;
+  return 0;
+}
+```
+
 ### 应用protobuf的RPC框架TODO
 https://github.com/protocolbuffers/protobuf/blob/main/docs/third_party.md
 
@@ -93,6 +169,8 @@ https://github.com/protocolbuffers/protobuf/blob/main/docs/third_party.md
   IMPROT_PATH需要包含的proto文件目录, --proto_path 缩写 -I, 可多次传递
 ```
 3. 工程编译链接protobuf库文件
+4. .proto文件中的[option选项](https://zhuanlan.zhihu.com/p/425528252#%E4%B8%89%E3%80%81C++%E4%BD%BF%E7%94%A8protobuf%E5%AE%9E%E7%8E%B0%E5%BA%8F%E5%88%97%E5%8C%96%E7%9A%84%E7%A4%BA%E4%BE%8B%EF%BC%9A)
+   * SPEED， CODE_SIZE， LITE_RUNTIME
 
 ## 消息API
 
@@ -299,7 +377,7 @@ message Request {
 
   4. [IO](https://protobuf.dev/reference/cpp/api-docs/#google.protobuf.io) 用于I/O的辅助类
     * [google/protobuf/io/zero_copy_stream.h](https://protobuf.dev/reference/cpp/api-docs/google.protobuf.io.zero_copy_stream/)该文件包含ZeroCopyInputStream和ZeroCopyOutputStream接口，它们表示可以读取和写入协议缓冲区的抽象 I/O 流
-       * TODO
+       * [ZeroCopy](https://checkking.github.io/post/cs/pb_zero_copy/)
   
   6. [Utility](https://protobuf.dev/reference/cpp/api-docs/#google.protobuf.util)实用程序类
       * [google/protobuf/util/json_util.h][3] 用于在protobuf二进制格式和proto3 JSON格式之间转换, 性能一般
@@ -323,4 +401,8 @@ message Request {
   
   [3]: https://protobuf.dev/reference/cpp/api-docs/google.protobuf.util.json_util
     
+## 进阶使用
+
+### 优化技巧
+
 
