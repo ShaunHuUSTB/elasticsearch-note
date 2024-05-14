@@ -368,7 +368,7 @@ message Request {
   * 解析和序列化(Parsing and Serialization)
   ```
   bool SerializeToString(string* output) const; // 序列化消息并存储给定字符串中二进制的字节
-  bool ParseFromString(const string& data); // 从给定字符串中解析消息
+  bool ParseFromString(const string& data); // 从给定字符串中解析消息，字符串不能为空
   bool SerializeToArray(void * data, int size) const  //将消息序列化至数组
   bool ParseFromArray(const void * data, int size)    //从数组解析消息
   bool SerializeToOstream(ostream* output) const; //将消息写入到给定的C++ ostream中
